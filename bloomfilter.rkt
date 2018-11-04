@@ -41,6 +41,8 @@
                   (string-append "test" (number->string i))))
   (test-case "test bloom?"
     (check-true (bloom? (bloom-new 1 1))))
+  (test-case "test empty bloom"
+    (check-false (bloom-exists? (bloom-new 1 1) "non-existing-item")))
   (test-case "adding one by one"
     (define bloom (for/fold ([b (bloom-new 300 100)])
                             ([item (in-list items)])
