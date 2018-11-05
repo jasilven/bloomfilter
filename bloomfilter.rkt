@@ -21,7 +21,7 @@
            [num (string->number (md5 (open-input-string s)) 16)])
       (modulo num (bit-vector-length (bloom-bits b))))))
 
-;; add item to bloomfilter
+;; returns new bloom filter with items in lst added
 (define (bloom-add b lst)
   (define bitvec (bit-vector-copy (bloom-bits b)))
   (for* ([item (in-list lst)]
@@ -47,13 +47,10 @@
     (define bloom (for/fold ([b (bloom-new 300 100)])
                             ([item (in-list items)])
                     (bloom-add b (list item))))
-    (check-true (andmap (curry bloom-exists? bloom)
-                        items)))
+    (check-true (andmap (curry bloom-exists? bloom) items)))
   (test-case "adding list of items"
-    (define bloom (bloom-add (bloom-new 400 200)
-                             items))
-    (check-true (andmap (curry bloom-exists? bloom)
-                        items)))
+    (define bloom (bloom-add (bloom-new 400 200) items))
+    (check-true (andmap (curry bloom-exists? bloom) items)))
   (test-case "non existing item"
     (define items (for/list ([i (in-range 0 100)])
                     (string-append "test" (number->string i))))
